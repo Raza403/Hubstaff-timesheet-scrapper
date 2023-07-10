@@ -1,18 +1,37 @@
-// Object for storing final data table
-const date_time={};
-// Getting all elements from table
-const elements = Array.from(document.querySelectorAll(".time-entries-for-date"));
-// Looping over these elements
-const dateTime = elements.map((e)=>{
-// Started converting time
-let time = e.firstChild.lastChild.firstChild.innerText.split(":");
-let hour = Number(time[0]);
-// Rounding Minutes here, there may be small fraction errors due to rounding
-let Minutes = Math.round(((Number(time[1] + "." + time[2])/60)*100));
-// Combining minutes and hours
-let combined_time = hour + ":" + Number(Minutes);
-// Putting into object
-date_time[e.firstChild.firstChild.firstChild.innerText] = combined_time;
-});
-// Showing data to you
-console.table(date_time);
+// Get all the h4 elements in the document
+const h4Elements = document.getElementsByTagName('h4');
+const data = [];
+
+// Loop through the h4 elements in reverse order
+for (let i = h4Elements.length - 1; i >= 0; i--) {
+  const h4Element = h4Elements[i];
+
+  // Find the child element with the class 'date' within the h4 element
+  const dateElement = h4Element.querySelector('.date');
+  // Get the inner text of the date element, or set it to null if the element is not found
+  const dateText = dateElement ? dateElement.innerText : null;
+
+  // Find the child element with the class 'duration' within the h4 element
+  const durationElement = h4Element.querySelector('.duration');
+  // Get the inner text of the duration element, or set it to null if the element is not found
+  const timeDuration = durationElement ? durationElement.innerText : null;
+
+  // Convert minutes and seconds to hours
+  let durationHours;
+  if (timeDuration) {
+    // Split the time duration string by ':' delimiter and assign the values to hours, minutes, and seconds variables
+    const [hours = '0', minutes = '0', seconds = '0'] = timeDuration.split(':');
+    // Calculate the duration in hours by converting minutes and seconds to fractions of an hour
+    durationHours = parseInt(hours, 10) + parseInt(minutes, 10) / 60 + parseInt(seconds, 10) / 3600;
+
+    // Push an object with Date and Time properties to the data array
+    // Date property is assigned the value of dateText, and Time property is assigned the duration in hours
+    data.push({
+      Date: dateText,
+      Time: durationHours.toFixed(2) + ' hours'
+    });
+  }
+}
+
+// Display the data array as a table in the console
+console.table(data);
